@@ -5,10 +5,6 @@ One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
 desktop, iOS and the other Apple platforms, the web, Linux and Windows. The
 search runs off the calling thread, so the UI never waits for it.
 
-The rules and the algorithm are the same as in the Flutter package
-[`flutter_phonetics`](#flutter), and the tests compare more than 2,800 results
-with the ones the Dart package produces.
-
 ```kotlin
 // Bangla phonetics
 val bangla = BanglaPhonetics.instance
@@ -293,10 +289,9 @@ Datasets:
 
 ## Flutter
 
-This package is also available for Flutter and Dart as `flutter_phonetics`.
-
-- pub.dev: <https://pub.dev/packages/flutter_phonetics>
-- GitHub: <https://github.com/zakaria5729/flutter_phonetics>
+This package is also available for Flutter:
+[pub.dev](https://pub.dev/packages/flutter_phonetics) |
+[GitHub](https://github.com/zakaria5729/flutter_phonetics)
 
 ## Development
 
