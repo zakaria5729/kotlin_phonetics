@@ -1,5 +1,4 @@
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
@@ -7,6 +6,7 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.mavenPublish) apply false
 }
 
 allprojects {
@@ -20,30 +20,34 @@ val libraryModules = mapOf(
 )
 
 subprojects {
-    val description = libraryModules[name] ?: return@subprojects
-    apply(plugin = "maven-publish")
-    extensions.configure<PublishingExtension> {
-        publications.withType<MavenPublication>().configureEach {
-            pom {
-                this.name.set(project.name)
-                this.description.set(description)
-                url.set("https://github.com/zakaria5729/kotlin-phonetics")
-                licenses {
-                    license {
-                        this.name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
+    val moduleDescription = libraryModules[name] ?: return@subprojects
+    apply(plugin = "com.vanniktech.maven.publish")
+    extensions.configure<MavenPublishBaseExtension> {
+        publishToMavenCentral()
+        coordinates(group.toString(), name, version.toString())
+        pom {
+            this.name.set(project.name)
+            description.set(moduleDescription)
+            inceptionYear.set("2026")
+            url.set("https://github.com/zakaria5729/kotlin_phonetics")
+            licenses {
+                license {
+                    this.name.set("MIT License")
+                    url.set("https://opensource.org/licenses/MIT")
+                    distribution.set("repo")
                 }
-                developers {
-                    developer {
-                        id.set("zakaria5729")
-                        this.name.set("Zakaria Hossain")
-                    }
+            }
+            developers {
+                developer {
+                    id.set("zakaria5729")
+                    this.name.set("Zakaria Hossain")
+                    url.set("https://github.com/zakaria5729")
                 }
-                scm {
-                    url.set("https://github.com/zakaria5729/kotlin-phonetics")
-                    connection.set("scm:git:https://github.com/zakaria5729/kotlin-phonetics.git")
-                }
+            }
+            scm {
+                url.set("https://github.com/zakaria5729/kotlin_phonetics")
+                connection.set("scm:git:https://github.com/zakaria5729/kotlin_phonetics.git")
+                developerConnection.set("scm:git:ssh://git@github.com/zakaria5729/kotlin_phonetics.git")
             }
         }
     }
