@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Phonetics XML</string>
+    <string name="language_bangla">Bangla</string>
+    <string name="language_english">English</string>
+    <string name="input_hint">Type a name</string>
+    <string name="waiting">Type something to see sound-alike spellings</string>
+</resources>
