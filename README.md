@@ -5,9 +5,9 @@ One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
 desktop, iOS and the other Apple platforms, the web, Linux and Windows. The
 search runs off the calling thread, so the UI never waits for it.
 
-It is a port of the Dart package `flutter_phonetics`
-([pub.dev](https://pub.dev/packages/flutter_phonetics) |
-[GitHub](https://github.com/zakaria5729/flutter_phonetics)).
+Also available for Flutter as `flutter_phonetics`:
+[pub.dev](https://pub.dev/packages/flutter_phonetics) |
+[GitHub](https://github.com/zakaria5729/flutter_phonetics).
 The rules and the algorithm are the same, and the tests compare more than 2,800
 results with the ones the Dart package produces.
 
