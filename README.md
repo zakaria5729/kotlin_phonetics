@@ -1,5 +1,7 @@
 # kotlin-phonetics
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.zakaria5729/phonetics?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
+
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
 desktop, iOS and the other Apple platforms, the web, Linux and Windows. The
@@ -59,6 +61,30 @@ dependencies {
     implementation("io.github.zakaria5729:phonetics:0.1.1")
 }
 ```
+
+Groovy DSL (`build.gradle`) and Maven (`pom.xml`) for a JVM project:
+
+```groovy
+implementation 'io.github.zakaria5729:phonetics-jvm:0.1.1'
+```
+
+```xml
+<dependency>
+    <groupId>io.github.zakaria5729</groupId>
+    <artifactId>phonetics-jvm</artifactId>
+    <version>0.1.1</version>
+</dependency>
+```
+
+Download from Maven Central:
+
+| Artifact | Maven Central |
+| --- | --- |
+| `phonetics` | [central.sonatype.com/artifact/io.github.zakaria5729/phonetics](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics) |
+| `phonetics-compose` | [central.sonatype.com/artifact/io.github.zakaria5729/phonetics-compose](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics-compose) |
+
+The jar, sources and Javadoc files for every target are also in the
+[repository folder](https://repo1.maven.org/maven2/io/github/zakaria5729/).
 
 The Android library needs `minSdk` 21. `phonetics-compose` needs a Compose
 Multiplatform version that supports your targets (it has no Intel iOS or macOS
