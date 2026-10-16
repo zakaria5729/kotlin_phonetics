@@ -48,9 +48,9 @@ project that is `commonMain`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.zakaria5729:phonetics:0.1.0")
+            implementation("io.github.zakaria5729:phonetics:0.1.1")
             // for Compose
-            implementation("io.github.zakaria5729:phonetics-compose:0.1.0")
+            implementation("io.github.zakaria5729:phonetics-compose:0.1.1")
         }
     }
 }
@@ -60,7 +60,7 @@ An Android or JVM only project uses the same coordinates:
 
 ```kotlin
 dependencies {
-    implementation("io.github.zakaria5729:phonetics:0.1.0")
+    implementation("io.github.zakaria5729:phonetics:0.1.1")
 }
 ```
 

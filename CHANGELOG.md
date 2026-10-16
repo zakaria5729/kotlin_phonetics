@@ -1,3 +1,8 @@
+## 0.1.1
+
+- Publishing set up for Maven Central, with signed artifacts, sources and Javadoc jars.
+- POM and SCM links now point to the right GitHub repository.
+
 ## 0.1.0
 
 - First release, a Kotlin Multiplatform port of the Dart package `flutter_phonetics` 0.1.1.

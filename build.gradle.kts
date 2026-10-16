@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "io.github.zakaria5729"
-    version = "0.1.0"
+    version = "0.1.1"
 }
 
 val libraryModules = mapOf(
