@@ -1,0 +1,9 @@
+name: phonetics_golden
+description: Writes reference results from the Dart package for the Kotlin tests.
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter_phonetics: 0.1.1
