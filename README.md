@@ -341,6 +341,18 @@ MIT, see [LICENSE](LICENSE).
 
 ## Connect with Developer
 
+Built and maintained by Zakaria Hossain, known online as zakaria5729.
+
+[LinkedIn](https://www.linkedin.com/in/zakaria5729) |
+[GitHub](https://github.com/zakaria5729) |
+[Stack Overflow](https://stackoverflow.com/users/8641776/zakaria-hossain?tab=profile) |
+[Medium](https://medium.com/@zakaria5729) |
+[Substack](https://substack.com/@zakaria5729) |
+[Twitter](https://twitter.com/zakaria5729) |
+[Facebook](https://www.facebook.com/zakaria5729)
+
+## Connect with Developer
+
 [LinkedIn](https://www.linkedin.com/in/zakaria5729) |
 [GitHub](https://github.com/zakaria5729) |
 [Stack Overflow](https://stackoverflow.com/users/8641776/zakaria-hossain?tab=profile) |
