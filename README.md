@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.zakaria5729/phonetics?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
 [![JitPack](https://jitpack.io/v/zakaria5729/kotlin_phonetics.svg)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
-[![klibs.io](https://img.shields.io/badge/klibs.io-kotlin__phonetics-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
+[![klibs.io](https://img.shields.io/maven-central/v/io.github.zakaria5729/phonetics?label=klibs.io&color=7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
 
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
