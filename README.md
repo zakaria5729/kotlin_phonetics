@@ -12,6 +12,8 @@ search runs off the calling thread, so the UI never waits for it.
 
 Try it live: [zakaria5729.github.io/kotlin_phonetics](https://zakaria5729.github.io/kotlin_phonetics/)
 — the `sample-compose` app, built as Kotlin/Wasm and deployed to GitHub Pages.
+Switch between Bangla and English, and try the search box, pairwise similarity,
+stress test and execution-mode sections.
 
 ```kotlin
 // Bangla phonetics
