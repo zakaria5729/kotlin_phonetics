@@ -2,6 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.zakaria5729/phonetics?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
 [![JitPack](https://jitpack.io/v/zakaria5729/kotlin_phonetics.svg)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
+[![klibs.io](https://img.shields.io/badge/klibs.io-kotlin__phonetics-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
 
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
@@ -86,6 +87,8 @@ Download from Maven Central:
 
 The jar, sources and Javadoc files for every target are also in the
 [repository folder](https://repo1.maven.org/maven2/io/github/zakaria5729/).
+The project is listed on [klibs.io](https://klibs.io/project/zakaria5729/kotlin_phonetics),
+the Kotlin Multiplatform library catalog.
 
 The Android library needs `minSdk` 21. `phonetics-compose` needs a Compose
 Multiplatform version that supports your targets (it has no Intel iOS or macOS
