@@ -1,6 +1,7 @@
 # kotlin-phonetics
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.zakaria5729/phonetics?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
+[![JitPack](https://jitpack.io/v/zakaria5729/kotlin_phonetics.svg)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
 
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
@@ -46,9 +47,9 @@ project that is `commonMain`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.zakaria5729:phonetics:0.1.1")
+            implementation("io.github.zakaria5729:phonetics:0.1.2")
             // for Compose
-            implementation("io.github.zakaria5729:phonetics-compose:0.1.1")
+            implementation("io.github.zakaria5729:phonetics-compose:0.1.2")
         }
     }
 }
@@ -58,21 +59,21 @@ An Android or JVM only project uses the same coordinates:
 
 ```kotlin
 dependencies {
-    implementation("io.github.zakaria5729:phonetics:0.1.1")
+    implementation("io.github.zakaria5729:phonetics:0.1.2")
 }
 ```
 
 Groovy DSL (`build.gradle`) and Maven (`pom.xml`) for a JVM project:
 
 ```groovy
-implementation 'io.github.zakaria5729:phonetics-jvm:0.1.1'
+implementation 'io.github.zakaria5729:phonetics-jvm:0.1.2'
 ```
 
 ```xml
 <dependency>
     <groupId>io.github.zakaria5729</groupId>
     <artifactId>phonetics-jvm</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
 
@@ -93,6 +94,28 @@ build, because Compose has none).
 The artifacts are on Maven Central, so `mavenCentral()` is all you need in your
 repositories. To try local changes, run `./gradlew publishToMavenLocal` in this
 repository and add `mavenLocal()` as well.
+
+### From JitPack
+
+Every release tag is also built by [JitPack](https://jitpack.io/#zakaria5729/kotlin_phonetics).
+Add the repository, then use the `com.github` coordinates with the tag as the
+version:
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics:v0.1.2")
+    // for Compose
+    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics-compose:v0.1.2")
+}
+```
+
+Maven Central is the main source; use one or the other, not both, in the same
+project.
 
 ## Usage
 

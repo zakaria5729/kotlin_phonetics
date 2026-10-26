@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Also available on JitPack as `com.github.zakaria5729.kotlin_phonetics`.
+
 ## 0.1.1
 
 - Publishing set up for Maven Central, with signed artifacts, sources and Javadoc jars.
