@@ -3,11 +3,15 @@
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-0.1.2-blue)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
 [![JitPack](https://img.shields.io/badge/JitPack-0.1.2-green)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
 [![klibs.io](https://img.shields.io/badge/klibs.io-0.1.2-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
+[![Web demo](https://img.shields.io/badge/demo-live-orange)](https://zakaria5729.github.io/kotlin_phonetics/)
 
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
 desktop, iOS and the other Apple platforms, the web, Linux and Windows. The
 search runs off the calling thread, so the UI never waits for it.
+
+Try it live: [zakaria5729.github.io/kotlin_phonetics](https://zakaria5729.github.io/kotlin_phonetics/)
+— the `sample-compose` app, built as Kotlin/Wasm and deployed to GitHub Pages.
 
 ```kotlin
 // Bangla phonetics
