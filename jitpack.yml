@@ -1,0 +1,4 @@
+jdk:
+  - openjdk17
+install:
+  - ./gradlew :phonetics:publishToMavenLocal :phonetics-compose:publishToMavenLocal

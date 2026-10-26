@@ -9,9 +9,12 @@ plugins {
     alias(libs.plugins.mavenPublish) apply false
 }
 
+// JitPack builds from a git tag and serves the result under its own group.
+val jitpack = System.getenv("JITPACK") == "true"
+
 allprojects {
-    group = "io.github.zakaria5729"
-    version = "0.1.1"
+    group = if (jitpack) "com.github.zakaria5729.kotlin_phonetics" else "io.github.zakaria5729"
+    version = if (jitpack) System.getenv("VERSION") else "0.1.2"
 }
 
 val libraryModules = mapOf(
