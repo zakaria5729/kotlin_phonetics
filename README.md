@@ -13,7 +13,7 @@ search runs off the calling thread, so the UI never waits for it.
 Try it live: [zakaria5729.github.io/kotlin_phonetics](https://zakaria5729.github.io/kotlin_phonetics/)
 — the `sample-compose` app, built as Kotlin/Wasm and deployed to GitHub Pages.
 Switch between Bangla and English, and try the search box, pairwise similarity,
-stress test and execution-mode sections.
+stress test, execution-mode and cross-language sections.
 
 ```kotlin
 // Bangla phonetics
@@ -26,6 +26,9 @@ val english = EnglishPhonetics.instance
 val names = english.generate("Philip", minScore = 90.0)
 // Philip 100%, Filip 95%, Phillip 95%, Philipp 95%, Fillip 90.25%, ...
 ```
+
+A name in Bangla or English can also give spellings in the other script, see
+[Cross-language phonetics](#cross-language-phonetics).
 
 `generate` is a `suspend` function. Every call returns a result object with the
 value and an `error`; nothing is thrown.
@@ -206,6 +209,140 @@ dispose the instance when it leaves the composition. `rememberPhoneticMatches`,
 the first result, keep the previous result while a new one is computed, and
 cancel a running request when the input changes. It is the same code on
 Android, desktop, iOS and the web; `sample-compose` shows it.
+
+## Cross-language phonetics
+
+`CrossLanguagePhonetics` takes a **Bangla or an English name** and returns two
+separate lists: Bangla spelling variants and English spelling variants. The
+spellings in the other script are generated straight from how the name sounds.
+The script of the input decides the direction.
+
+```kotlin
+val result = CrossLanguagePhonetics.instance.generate(
+    input = "মাসুদ",
+    languages = setOf(PhoneticLanguages.bangla, PhoneticLanguages.english),
+    minScore = 90.0,
+)
+
+result.bangla.matches   // মাসুদ 100%, মাসূদ 97%, মাশুদ 95%, মাষুদ 95%, মাশূদ 92.15%, মাষূদ 92.15%
+result.english.matches  // Masud 100%, Masood 95%, Masoud 90%, Mashud 90%
+result.error            // the first error of the two lists, or null
+```
+
+An English name works the same way:
+
+```kotlin
+val result = CrossLanguagePhonetics.instance.generate("Masud", minScore = 90.0)
+
+result.bangla.matches   // মাসুদ 100%, মাসূদ 95%, মাসুড 95%, মসুদ 93%, মাশুদ 93%, ...
+result.english.matches  // Masud 100%, Massud 95%, Masudd 95%, ...
+```
+
+Both lists are independent. Ask for one language with
+`languages = setOf(PhoneticLanguages.english)`, or leave `languages` out to get
+both.
+
+| Input | Bangla list | English list |
+| --- | --- | --- |
+| Bangla name | what `BanglaPhonetics.generate` returns for the same arguments | English spellings generated from the Bangla pronunciation |
+| English name | Bangla spellings generated from the English spelling | what `EnglishPhonetics.generate` returns for the same arguments |
+
+### Why this is not transliteration
+
+There is no Bangla → Roman step that feeds a list of candidates into
+`EnglishPhonetics`, and no Roman transliteration is offered as a feature.
+The name is analysed as sound: for a Bangla name syllables, inherent vowels,
+conjuncts, geminates and nasal signs, for an English name its letter groups
+(`sh`, `th`, `ng`, `ee`, `ay`, doubled letters). Every sound carries its own
+spellings in the other script, each with a confidence. The search then combines them best first, like `generate` does
+for swaps. Different Bangla spellings of one sound (স, শ, ষ; ই, ঈ, ি, ী) lead to
+the same English candidates, which is what a name search needs.
+
+### Scores and limits
+
+- Scores are 0 to 100. The best reading of the name is 100%, and every other
+  spelling is the product of the confidences of the sounds that differ from it.
+- The English score is relative to the best English reading of the name, and the
+  Bangla score to the input. They come from different models, so **do not compare
+  a Bangla score with an English score**.
+- `minScore` and `maxResults` are applied to each list on its own. Use
+  `PhoneticSearchOptions` to set them per language:
+
+```kotlin
+val result = CrossLanguagePhonetics.instance.generate(
+    input = "মোহাম্মদ",
+    languages = setOf(PhoneticLanguages.bangla, PhoneticLanguages.english),
+    banglaOptions = PhoneticSearchOptions(minScore = 95.0, maxResults = 5),
+    englishOptions = PhoneticSearchOptions(minScore = 80.0, maxResults = 20),
+)
+```
+
+- `includeOriginal` only concerns the list in the script of the input, because
+  the other list has no original. The best reading in the other script is always
+  included.
+- `maxChanges` limits how many sounds may differ from the best reading, in both lists.
+- Results are deduplicated and ordered the same way on every run.
+- Empty or blank input gives empty lists. Input in another script, or only digits,
+  gives a `PhoneticArgumentException` in both lists. A stray character such as an
+  emoji inside a name fails only the list that has to read it. Digits, spaces,
+  hyphens and dots are carried over, and English output has each word capitalised.
+
+### Example outputs
+
+| Input | Some of the English spellings, best first |
+| --- | --- |
+| মাসুদ | Masud, Masood, Masoud, Mashud |
+| রহিম | Rohim, Rahim, Roheem, Raheem |
+| মোহাম্মদ | Mohammod, Mohammad, Muhammod, Mohamod, Muhammad, Mohammed |
+| সাদ্দাম | Saddam, Shaddam, Sadam |
+| ফারজানা | Farjana, Farzana, Faarjana |
+| শাকিব | Shakib, Shakeeb, Sakib |
+| জাহাঙ্গীর | Jahangir, Zahangir, Jahangeer |
+
+The table shows examples, not the complete list. The first spelling is the
+reference reading, which follows the Bangla pronunciation (Rohim, Korim,
+Mohammod). Common Arabic-origin spellings such as Rahim, Karim, Muhammad and
+Mohammed are offered as alternatives and score a little lower, so a high
+`minScore` such as 90 can leave some of them out. Names have many accepted English spellings, so use a lower
+`minScore` to see more of them.
+
+| English input | Bangla spellings (best first) |
+| --- | --- |
+| Masud | মাসুদ, মাসূদ, মাসুড, মসুদ, মাশুদ |
+| Rahim | রাহিম, রাহীম, রহিম |
+| Farzana | ফারজানা, ফরজানা, ফারযানা |
+| Mostafa | মোস্তাফা, মোস্টাফা, মোস্তফা |
+| Stephen | স্টেফেন, স্তেফেন, শ্টেফেন |
+
+### Rules in short
+
+- Inherent vowels: kept in the first syllable, dropped at the end of a word after
+  a single consonant (মাসুদ → Masud), kept after a conjunct (শান্ত → Shanto,
+  Shanta, Shant), and dropped before a pronounced syllable (ফারজানা → Farjana).
+- Same sound, several English spellings: উ → u, oo, ou; ই → i, ee, e; স → s, sh;
+  জ → j, z; ফ → f, ph; ভ → bh, v, b; ো → o, u; ৈ → oi, ai, oy.
+- Conjuncts: doubled sounds are kept or reduced (সাদ্দাম → Saddam, Sadam),
+  ক্ষ, জ্ঞ and হ্ম are handled as units, ঙ before ক খ গ ঘ becomes n or ng, and
+  ্য, ্র, ্ব follow their own rules.
+- Nasal signs ং ঁ ঃ, য় after a vowel (রায়হান → Rayhan, Raihan), word-initial ওয়
+  (ওয়াসিম → Wasim) and ইউ (ইউসুফ → Yusuf).
+
+For English input, an `a` after a consonant becomes `া` or the silent inherent
+vowel (রাহিম, রহিম), `o` before `ng` is the inherent vowel (রংপুর), `s`, `t`,
+`d` and `n` offer their Bangla variants (স শ ষ, ত ট, দ ড, ন ণ), a word-initial
+consonant cluster becomes a conjunct (স্মিথ, স্টেফেন), and other clusters offer
+both the conjunct and the plain form (আব্দুল, ইসলাম). Doubled letters are kept or
+reduced (সাদ্দাম, সাদাম).
+
+The rules are tuned for Bangladeshi names and are a model of pronunciation, not
+a dictionary. Names with irregular pronunciation can need other spellings than
+the ones offered.
+
+Everything runs offline in common code on every target, with the same execution
+as the other classes: a background thread, or 8 ms slices on JS and Wasm.
+`generateAsync` is the callback form, and `cancelAll()`, `dispose()`,
+`setExecutionMode(...)` and `PhoneticCancelToken` work as described below.
+`CrossLanguageEngine` is the synchronous version.
 
 ## Languages
 

@@ -1,3 +1,12 @@
+## Unreleased
+
+- `CrossLanguagePhonetics` and `CrossLanguageEngine`: give a Bangla or an English name and
+  get Bangla and English spelling variants as two separate, independently scored lists,
+  generated from the pronunciation of the name and working offline in common code.
+- `PhoneticSearchOptions` to set `minScore`, `maxResults` and the other limits per language.
+- Existing APIs are unchanged. The background execution code now lives in an internal
+  scheduler shared by `Phonetics` and `CrossLanguagePhonetics`.
+
 ## 0.1.2
 
 - Also available on JitPack as `com.github.zakaria5729.kotlin_phonetics`.
