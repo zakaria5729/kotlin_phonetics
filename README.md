@@ -57,6 +57,12 @@ value and an `error`; nothing is thrown.
 - **Across scripts**: a Bangla name gives its English spellings and an English name gives its Bangla ones.
 - **Data cleaning**: collect the spelling variants of the same name before you merge records.
 
+## Downloads
+
+![Maven Central download metrics for the io.github.zakaria5729 namespace over the last 3 months: total downloads, unique sources and total companies](docs/download-metrics.png)
+
+Maven Central download metrics for the `io.github.zakaria5729` namespace, last 3 months.
+
 ## Modules
 
 | Module | What it is |
