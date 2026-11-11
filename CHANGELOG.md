@@ -1,4 +1,4 @@
-## Unreleased
+## 0.2.0
 
 - `CrossLanguagePhonetics` and `CrossLanguageEngine`: give a Bangla or an English name and
   get Bangla and English spelling variants as two separate, independently scored lists,

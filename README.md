@@ -1,8 +1,8 @@
 # kotlin-phonetics
 
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-0.1.2-blue)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
-[![JitPack](https://img.shields.io/badge/JitPack-0.1.2-green)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
-[![klibs.io](https://img.shields.io/badge/klibs.io-0.1.2-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-0.2.0-blue)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
+[![JitPack](https://img.shields.io/badge/JitPack-0.2.0-green)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
+[![klibs.io](https://img.shields.io/badge/klibs.io-0.2.0-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
 [![Web demo](https://img.shields.io/badge/demo-live-orange)](https://zakaria5729.github.io/kotlin_phonetics/)
 
 Finds sound-alike spellings of Bangla and English words, with a match percentage.
@@ -57,9 +57,9 @@ project that is `commonMain`:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.zakaria5729:phonetics:0.1.2")
+            implementation("io.github.zakaria5729:phonetics:0.2.0")
             // for Compose
-            implementation("io.github.zakaria5729:phonetics-compose:0.1.2")
+            implementation("io.github.zakaria5729:phonetics-compose:0.2.0")
         }
     }
 }
@@ -69,21 +69,21 @@ An Android or JVM only project uses the same coordinates:
 
 ```kotlin
 dependencies {
-    implementation("io.github.zakaria5729:phonetics:0.1.2")
+    implementation("io.github.zakaria5729:phonetics:0.2.0")
 }
 ```
 
 Groovy DSL (`build.gradle`) and Maven (`pom.xml`) for a JVM project:
 
 ```groovy
-implementation 'io.github.zakaria5729:phonetics-jvm:0.1.2'
+implementation 'io.github.zakaria5729:phonetics-jvm:0.2.0'
 ```
 
 ```xml
 <dependency>
     <groupId>io.github.zakaria5729</groupId>
     <artifactId>phonetics-jvm</artifactId>
-    <version>0.1.2</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -120,9 +120,9 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics:v0.1.2")
+    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics:v0.2.0")
     // for Compose
-    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics-compose:v0.1.2")
+    implementation("com.github.zakaria5729.kotlin_phonetics:phonetics-compose:v0.2.0")
 }
 ```
 

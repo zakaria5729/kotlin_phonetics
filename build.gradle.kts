@@ -14,7 +14,7 @@ val jitpack = System.getenv("JITPACK") == "true"
 
 allprojects {
     group = if (jitpack) "com.github.zakaria5729.kotlin_phonetics" else "io.github.zakaria5729"
-    version = if (jitpack) System.getenv("VERSION") else "0.1.2"
+    version = if (jitpack) System.getenv("VERSION") else "0.2.0"
 }
 
 val libraryModules = mapOf(
