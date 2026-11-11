@@ -138,7 +138,7 @@ public class PhoneticEngine(
         includeOriginal: Boolean,
         maxChanges: Int?,
     ): PhoneticJob<List<PhoneticMatch>> =
-        GenerateJob(this, input, minScore, maxResults, includeOriginal, maxChanges)
+        GenerateJob.forRules(this, input, minScore, maxResults, includeOriginal, maxChanges)
 
     internal fun createRankJob(
         query: String,
@@ -210,29 +210,63 @@ private class SearchState(
     val order: Int,
 )
 
-private class Slot(
+internal class Slot(
     val start: Int,
     val spelling: String,
     val alternatives: List<PhoneticAlternative>,
+    val sequence: Int = start,
 )
 
-private class GenerateJob(
-    engine: PhoneticEngine,
-    input: String,
+internal fun orderSlotsByConfidence(slots: List<Slot>): List<Slot> =
+    slots.sortedWith { a, b ->
+        val bySimilarity = b.alternatives.first().similarity.compareTo(a.alternatives.first().similarity)
+        if (bySimilarity != 0) bySimilarity else a.sequence.compareTo(b.sequence)
+    }
+
+private fun findRuleSlots(rules: PhoneticRuleSet, normalizedInput: String): List<Slot> {
+    val found = mutableListOf<Slot>()
+    var index = 0
+    while (index < normalizedInput.length) {
+        var length = 1
+        var alternatives: List<PhoneticAlternative>? = null
+        var candidateLength = min(rules.longestSpellingLength, normalizedInput.length - index)
+        while (candidateLength >= 1) {
+            val options = rules.alternativesFor(
+                normalizedInput.substring(index, index + candidateLength),
+                atWordStart = startsWord(normalizedInput, index),
+                atWordEnd = endsWord(normalizedInput, index + candidateLength),
+                generating = true,
+            )
+            if (options.isNotEmpty()) {
+                length = candidateLength
+                alternatives = options
+                break
+            }
+            candidateLength--
+        }
+        if (alternatives != null) {
+            found.add(Slot(index, normalizedInput.substring(index, index + length), alternatives))
+        }
+        index += length
+    }
+    return orderSlotsByConfidence(found)
+}
+
+internal class GenerateJob(
+    private val normalizedInput: String,
+    private val slots: List<Slot>,
+    private val renderWord: (String) -> String,
     private val minScore: Double,
     maxResults: Int?,
+    resultLengthBasis: Int,
     private val includeOriginal: Boolean,
     maxChanges: Int?,
 ) : PhoneticJob<List<PhoneticMatch>>() {
-    private val normalizer = engine.language.normalizer
-    private val normalizedInput = engine.language.normalize(input)
-    private val letterCase = engine.language.normalizer.detectCase(input)
     private val logCutoff = logCutoffFor(minScore)
-    private val maxResults = resultLimit(maxResults, input.length)
+    private val maxResults = resultLimit(maxResults, resultLengthBasis)
     private val maxChanges = maxChanges ?: NO_LIMIT
     private val maxExpansions = this.maxResults * 16 + 1024
 
-    private val slots = mutableListOf<Slot>()
     private val queue = Heap<SearchState> { a, b ->
         a.logScore > b.logScore || (a.logScore == b.logScore && a.order < b.order)
     }
@@ -247,7 +281,6 @@ private class GenerateJob(
         if (normalizedInput.isEmpty()) {
             finished = true
         } else {
-            findSlots(engine.rules)
             queue.push(SearchState(null, -1, 0, 0.0, 0, createdCount++))
         }
     }
@@ -257,39 +290,6 @@ private class GenerateJob(
 
     override val result: List<PhoneticMatch>
         get() = results
-
-    private fun findSlots(rules: PhoneticRuleSet) {
-        val found = mutableListOf<Slot>()
-        var index = 0
-        while (index < normalizedInput.length) {
-            var length = 1
-            var alternatives: List<PhoneticAlternative>? = null
-            var candidateLength = min(rules.longestSpellingLength, normalizedInput.length - index)
-            while (candidateLength >= 1) {
-                val options = rules.alternativesFor(
-                    normalizedInput.substring(index, index + candidateLength),
-                    atWordStart = startsWord(normalizedInput, index),
-                    atWordEnd = endsWord(normalizedInput, index + candidateLength),
-                    generating = true,
-                )
-                if (options.isNotEmpty()) {
-                    length = candidateLength
-                    alternatives = options
-                    break
-                }
-                candidateLength--
-            }
-            if (alternatives != null) {
-                found.add(Slot(index, normalizedInput.substring(index, index + length), alternatives))
-            }
-            index += length
-        }
-        found.sortWith { a, b ->
-            val bySimilarity = b.alternatives.first().similarity.compareTo(a.alternatives.first().similarity)
-            if (bySimilarity != 0) bySimilarity else a.start.compareTo(b.start)
-        }
-        slots.addAll(found)
-    }
 
     override fun advance(workUnits: Int) {
         var done = 0
@@ -319,7 +319,7 @@ private class GenerateJob(
         if (state.slot < 0) {
             seenWords.add(normalizedInput)
             if (includeOriginal) {
-                results.add(PhoneticMatch(normalizer.applyCase(normalizedInput, letterCase), 100.0))
+                results.add(PhoneticMatch(renderWord(normalizedInput), 100.0))
             }
             return
         }
@@ -330,7 +330,12 @@ private class GenerateJob(
             changedStates.add(current)
             current = current.parent
         }
-        changedStates.sortBy { slots[it.slot].start }
+        changedStates.sortWith { a, b ->
+            val first = slots[a.slot]
+            val second = slots[b.slot]
+            val byStart = first.start.compareTo(second.start)
+            if (byStart != 0) byStart else first.sequence.compareTo(second.sequence)
+        }
 
         val buffer = StringBuilder()
         var cursor = 0
@@ -350,7 +355,7 @@ private class GenerateJob(
             val alternative = slot.alternatives[changed.alternativeNumber - 1]
             PhoneticChange(slot.start, slot.spelling, alternative.text, alternative.similarity)
         }
-        results.add(PhoneticMatch(normalizer.applyCase(word, letterCase), score, changes))
+        results.add(PhoneticMatch(renderWord(word), score, changes))
     }
 
     private fun pushChildren(state: SearchState) {
@@ -407,6 +412,31 @@ private class GenerateJob(
     ) {
         if (logScore < logCutoff) return
         queue.push(SearchState(parent, slot, alternativeNumber, logScore, changeCount, createdCount++))
+    }
+    companion object {
+        fun forRules(
+            engine: PhoneticEngine,
+            input: String,
+            minScore: Double,
+            maxResults: Int?,
+            includeOriginal: Boolean,
+            maxChanges: Int?,
+        ): GenerateJob {
+            val normalizedInput = engine.language.normalize(input)
+            val normalizer = engine.language.normalizer
+            val letterCase = normalizer.detectCase(input)
+            val slots = if (normalizedInput.isEmpty()) emptyList() else findRuleSlots(engine.rules, normalizedInput)
+            return GenerateJob(
+                normalizedInput,
+                slots,
+                { word -> normalizer.applyCase(word, letterCase) },
+                minScore,
+                maxResults,
+                input.length,
+                includeOriginal,
+                maxChanges,
+            )
+        }
     }
 }
 
