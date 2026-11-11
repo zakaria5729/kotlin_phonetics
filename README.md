@@ -1,14 +1,23 @@
-# kotlin-phonetics
+# Kotlin Phonetics
+
+**Bangla & English phonetic search for Kotlin Multiplatform.**
+Find similar-sounding words, compare phonetic similarity, rank search results,
+and match names across Bangla and English, on Android, iOS, JVM, desktop and the web.
 
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-0.2.0-blue)](https://central.sonatype.com/artifact/io.github.zakaria5729/phonetics)
 [![JitPack](https://img.shields.io/badge/JitPack-0.2.0-green)](https://jitpack.io/#zakaria5729/kotlin_phonetics)
 [![klibs.io](https://img.shields.io/badge/klibs.io-0.2.0-7F52FF)](https://klibs.io/project/zakaria5729/kotlin_phonetics)
 [![Web demo](https://img.shields.io/badge/demo-live-orange)](https://zakaria5729.github.io/kotlin_phonetics/)
+[![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF)](https://kotlinlang.org/docs/multiplatform.html)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Finds sound-alike spellings of Bangla and English words, with a match percentage.
+A phonetic search engine for Kotlin: it finds sound-alike spellings of Bangla and
+English words, with a match percentage.
 One Kotlin Multiplatform library for Android (Views and Compose), the JVM and
 desktop, iOS and the other Apple platforms, the web, Linux and Windows. The
 search runs off the calling thread, so the UI never waits for it.
+
+![Cross-language demo: typing মাসুদ and Masud gives Bangla and English spelling variants with match percentages, then compares আসাদ and আছাদ at 85%](docs/demo.gif)
 
 Try it live: [zakaria5729.github.io/kotlin_phonetics](https://zakaria5729.github.io/kotlin_phonetics/)
 — the `sample-compose` app, built as Kotlin/Wasm and deployed to GitHub Pages.
@@ -38,6 +47,15 @@ value and an `error`; nothing is thrown.
 | Android, JVM and desktop (macOS, Linux, Windows) | a background thread (`Dispatchers.Default`) |
 | iOS, macOS, tvOS, watchOS, Linux and Windows native | a background thread |
 | Kotlin/JS and Kotlin/Wasm | the event loop, in 8 ms slices, so the page stays responsive and requests can still be cancelled |
+
+## Use cases
+
+- **Name search**: find "মাসুদ" when the record says "মাশুদ" or "Masood", and the other way round.
+- **Contact and customer lists**: `rank` orders a big list of names by how closely they sound like the query.
+- **Fuzzy name matching**: `similarity` and `matches` compare two spellings and give a percentage.
+- **Search-as-you-type**: requests run off the UI thread, a new keystroke cancels the previous search.
+- **Across scripts**: a Bangla name gives its English spellings and an English name gives its Bangla ones.
+- **Data cleaning**: collect the spelling variants of the same name before you merge records.
 
 ## Modules
 
@@ -511,16 +529,6 @@ MIT, see [LICENSE](LICENSE).
 ## Connect with Developer
 
 Built and maintained by Zakaria Hossain, known online as zakaria5729.
-
-[LinkedIn](https://www.linkedin.com/in/zakaria5729) |
-[GitHub](https://github.com/zakaria5729) |
-[Stack Overflow](https://stackoverflow.com/users/8641776/zakaria-hossain?tab=profile) |
-[Medium](https://medium.com/@zakaria5729) |
-[Substack](https://substack.com/@zakaria5729) |
-[Twitter](https://twitter.com/zakaria5729) |
-[Facebook](https://www.facebook.com/zakaria5729)
-
-## Connect with Developer
 
 [LinkedIn](https://www.linkedin.com/in/zakaria5729) |
 [GitHub](https://github.com/zakaria5729) |
