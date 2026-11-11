@@ -53,10 +53,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.zakaria5729.phonetics.BanglaPhonetics
+import io.github.zakaria5729.phonetics.CrossLanguagePhonetics
+import io.github.zakaria5729.phonetics.CrossLanguageResult
 import io.github.zakaria5729.phonetics.EnglishPhonetics
 import io.github.zakaria5729.phonetics.PhoneticCancelToken
 import io.github.zakaria5729.phonetics.PhoneticCancelledException
 import io.github.zakaria5729.phonetics.PhoneticExecutionMode
+import io.github.zakaria5729.phonetics.PhoneticLanguages
+import io.github.zakaria5729.phonetics.PhoneticMatchesResult
 import io.github.zakaria5729.phonetics.PhoneticMatch
 import io.github.zakaria5729.phonetics.Phonetics
 import kotlin.math.roundToInt
@@ -184,6 +188,7 @@ public fun App() {
                     item { PairwiseSection(language) }
                     item { HeavyJobSection(language) }
                     item { ThreeCallsSection(language) }
+                    item { CrossLanguageSection() }
                 }
             }
         }
@@ -580,5 +585,146 @@ private fun ThreeCallsSection(language: LanguageChoice) {
         Button(onClick = { run() }, enabled = !isRunning) { Text("Run 3 calls") }
         Spacer(Modifier.height(8.dp))
         lines.forEach { Text(it) }
+    }
+}
+
+private val crossLanguageBanglaSamples = listOf(
+    "মাসুদ", "সাদ্দাম", "মোজাফফর", "মোহাম্মদ", "আব্দুল", "রহিম", "করিম", "ফারজানা", "নাসির", "শাকিব",
+)
+
+private val crossLanguageEnglishSamples = listOf("Masud", "Rahim", "Farzana", "Mostafa", "Philip", "Stephen")
+
+@Composable
+private fun CrossLanguageSection() {
+    val crossLanguage = remember { CrossLanguagePhonetics() }
+    var isBanglaInput by remember { mutableStateOf(true) }
+    var banglaInput by remember { mutableStateOf("মাসুদ") }
+    var englishInput by remember { mutableStateOf("Philip") }
+    var minScore by remember { mutableStateOf(85f) }
+    var result by remember { mutableStateOf<CrossLanguageResult?>(null) }
+    val scope = rememberCoroutineScope()
+
+    fun search() {
+        scope.launch {
+            val outcome = crossLanguage.generate(
+                if (isBanglaInput) banglaInput else englishInput,
+                minScore = minScore.toDouble(),
+                maxResults = 30,
+            )
+            if (outcome.error is PhoneticCancelledException) return@launch
+            result = outcome
+        }
+    }
+
+    LaunchedEffect(Unit) { search() }
+    DisposableEffect(Unit) { onDispose { crossLanguage.dispose() } }
+
+    SectionCard(
+        title = "5. Cross-language: CrossLanguagePhonetics",
+        description = "Type a Bangla or an English name. You get Bangla spelling variants and English " +
+            "spelling variants for it, generated from how the name sounds. The two lists are scored " +
+            "separately, so their percentages are not comparable with each other.",
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("Input:", fontWeight = FontWeight.Bold)
+            FilterChip(
+                selected = isBanglaInput,
+                onClick = { isBanglaInput = true; search() },
+                label = { Text("Bangla") },
+            )
+            FilterChip(
+                selected = !isBanglaInput,
+                onClick = { isBanglaInput = false; search() },
+                label = { Text("English") },
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        OutlinedTextField(
+            value = if (isBanglaInput) banglaInput else englishInput,
+            onValueChange = {
+                if (isBanglaInput) banglaInput = it else englishInput = it
+                search()
+            },
+            label = { Text(if (isBanglaInput) "বাংলা নাম (Bangla name)" else "English name") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Quick test:",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val samples = if (isBanglaInput) crossLanguageBanglaSamples else crossLanguageEnglishSamples
+            samples.forEach { name ->
+                AssistChip(
+                    onClick = {
+                        if (isBanglaInput) banglaInput = name else englishInput = name
+                        search()
+                    },
+                    label = { Text(name) },
+                )
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "Minimum match: ${minScore.roundToInt()}%",
+                modifier = Modifier.width(150.dp),
+                fontWeight = FontWeight.Medium,
+            )
+            Slider(
+                value = minScore,
+                onValueChange = { minScore = it; search() },
+                valueRange = 0f..100f,
+                steps = 19,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        HorizontalDivider()
+        val current = result
+        val errorMessage = current?.error?.message
+        if (errorMessage != null) {
+            Text(errorMessage, color = MaterialTheme.colorScheme.error)
+        }
+        if (current != null) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                CrossLanguageColumn("Bangla", current.bangla.matches, Modifier.weight(1f))
+                CrossLanguageColumn("English", current.english.matches, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun CrossLanguageColumn(
+    title: String,
+    matches: List<PhoneticMatch>,
+    modifier: Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                "$title (${matches.size})",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            HorizontalDivider()
+            matches.forEach { match ->
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(match.word, fontSize = 18.sp)
+                    Text("${formatScore(match.score)}%", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        }
     }
 }
